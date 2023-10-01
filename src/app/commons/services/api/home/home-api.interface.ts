@@ -4,6 +4,11 @@ export interface IResponseHome {
 	success: boolean;
 }
 
+export interface IResponseHomev2 {
+	object: IHomeEvent[];
+	//success: boolean;
+}
+
 export interface IHomeConcerts {
 	id: number;
 	title: string;
@@ -17,6 +22,19 @@ export interface IHomeConcerts {
 	ticketsQuantity: number;
 	unitPrice: number;
 	status: string;
+}
+
+export interface IHomeEvent {
+	idEvent: number;
+	title: string;
+	description: string;
+	dateEvent: string;
+	image: string;
+	place: string;
+	ticketsQuantity: number;
+	unitPrice: number;
+	status: string;
+	category: IHomeCategory;
 }
 
 export interface IHomeGenres {

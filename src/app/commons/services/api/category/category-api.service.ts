@@ -5,8 +5,8 @@ import { environment } from './../../../../../environments/environment';
 import { IResponsev2 } from './../api-models-base.interface';
 import { IRequestCreateUpdateCategory, IResponseCategory } from './category-api-model.interface';
 
-export const URL_CATEGORY = 'http://localhost:8080/api/category';
-
+//export const URL_CATEGORY = 'http://localhost:8080/api/category';
+export const URL_CATEGORY = environment.host + '/category';
 @Injectable({
 	providedIn: 'root'
 })

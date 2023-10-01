@@ -37,9 +37,9 @@ registerLocaleData(LocalEsPe);
 	],
 	providers: [
 		{ provide: LOCALE_ID, useValue: 'es-PE' },
-		{ provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true },
 		{ provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
 	],
 	bootstrap: [AppComponent]
 })
 export class AppModule {}
+//{ provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true }, Interceptor de sessión

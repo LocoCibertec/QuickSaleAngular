@@ -7,4 +7,5 @@ export interface IResponse<T = void> {
 export interface IResponsev2<T = void> {
 	mensaje: string;
 	object: T; // data: IResponseGenre[]
+	success: boolean;
 }

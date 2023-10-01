@@ -10,7 +10,7 @@ import { Injectable } from '@angular/core';
 import { ToastEvokeService } from '@costlydeveloper/ngx-awesome-popup';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { catchError, finalize, Observable, tap, throwError } from 'rxjs';
-import { IResponse } from '../services/api/api-models-base.interface';
+import { IResponse, IResponsev2 } from '../services/api/api-models-base.interface';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
@@ -18,13 +18,21 @@ export class ErrorInterceptor implements HttpInterceptor {
 
 	intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
 		this._ngxService.start();
-
 		return next.handle(request).pipe(
 			finalize(() => this._ngxService.stop()),
+			/*
 			tap((response) => {
 				if (response instanceof HttpResponse && response.status === 200) {
 					const responseModel = response.body as IResponse;
 					this._captureResponse200(responseModel);
+				}
+				return response;
+			}),
+			*/
+			tap((response) => {
+				if (response instanceof HttpResponse && response.status === 200) {
+					const responseModel = response.body as IResponsev2;
+					this._captureResponse200v2(responseModel);
 				}
 				return response;
 			}),
@@ -55,6 +63,12 @@ export class ErrorInterceptor implements HttpInterceptor {
 	private _captureResponse200(response: IResponse) {
 		if (!response.success) {
 			this._toastEvokeService.danger('Error', response.errorMessage);
+		}
+	}
+
+	private _captureResponse200v2(response: IResponsev2) {
+		if (!response.success) {
+			this._toastEvokeService.danger('Error', 'No pudimos encontrar lo solicitado, intenta más tarde.');
 		}
 	}
 }

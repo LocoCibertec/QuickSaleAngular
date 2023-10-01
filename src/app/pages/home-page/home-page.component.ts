@@ -5,8 +5,9 @@ import { CarouselComponent } from 'src/app/carousel/carousel.component';
 import { SharedFormCompleteModule } from '../../commons/shared/shared-form-complete.module';
 import { HomeApiService } from 'src/app/commons/services/api/home/home-api.service';
 import { CategoryApiService } from 'src/app/commons/services/api/category/category-api.service';
+import { EventApiService } from 'src/app/commons/services/api/event/event-api.service';
 import { ICardEvent } from 'src/app/commons/models/components.interface';
-import { IHomeGenres, IHomeCategory } from 'src/app/commons/services/api/home/home-api.interface';
+import { IHomeGenres, IHomeCategory, IHomeEvent } from 'src/app/commons/services/api/home/home-api.interface';
 import { PATH_BUY_PAGES } from 'src/app/commons/config/path-pages';
 import { Router } from '@angular/router';
 import { DemoCorsService } from 'src/app/commons/services/api/demo-cors/demo-cors.service';
@@ -21,14 +22,16 @@ import { DemoCorsService } from 'src/app/commons/services/api/demo-cors/demo-cor
 export class HomePageComponent implements OnInit {
 	@ViewChild('cardDummy') cardDummy?: CardEventComponent;
 
-	private _homeApiService = inject(HomeApiService);
+	//private _homeApiService = inject(HomeApiService);
+	private _eventApiService = inject(EventApiService);
 	private _categoryApiService = inject(CategoryApiService);
 	private _router = inject(Router);
-	private _demoCorsService = inject(DemoCorsService);
+	//private _demoCorsService = inject(DemoCorsService);
 
 	listConcerts: ICardEvent[] = [];
 	listGenres: IHomeGenres[] = [];
 	listCategory: IHomeCategory[] = [];
+	listEvents: ICardEvent[] = [];
 	data: any[] = [];
 
 	cardEventDummy: ICardEvent = {
@@ -52,14 +55,13 @@ export class HomePageComponent implements OnInit {
 	}
 
 	private _loadHome() {
-		this._homeApiService.getHome().subscribe((response) => {
-			this.listGenres = response.genres;
-			this.listConcerts = response.getDataCardEvent();
-			this.data = response.genres;
+		this._eventApiService.getHome().subscribe((response)=>{
+			this.listEvents = response.getDataCardEvent();
 		});
+
 		this._categoryApiService.getCategorys().subscribe((response) => {
 			this.listCategory = response.object;
-			console.log(this.listCategory);
+			//console.log(this.listCategory);
 		});
 	}
 }
