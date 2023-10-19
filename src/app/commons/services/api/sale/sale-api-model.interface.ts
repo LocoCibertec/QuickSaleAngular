@@ -1,3 +1,7 @@
+import { IResponseEvent } from './../event/event-api-model.interface';
+import { IResponseCustomer } from './../customer/customer-api-model.interface';
+import { IResponsePayment } from './../payment/payment-api-model.interface';
+
 //#region CREATE SALE
 export interface IRequestCreateSale {
 	concertId: number;
@@ -45,3 +49,16 @@ export interface IResponseSale {
 	totalSale: number;
 }
 //#endregion
+
+//v2
+export interface IResponseSalev2 {
+	idSale: number;
+	saleDate: string;
+	operationNumber: string;
+	total: number;
+	quantity: number;
+	status: string;
+	event: IResponseEvent;
+	customer: IResponseCustomer;
+	payment: IResponsePayment;
+}

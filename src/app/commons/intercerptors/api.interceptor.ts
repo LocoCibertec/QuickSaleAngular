@@ -26,6 +26,7 @@ export class ApiInterceptor implements HttpInterceptor {
 	constructor(private _dataUser: DataUserService, private _router: Router) {}
 
 	intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+		/*
 		if (this.isExempted(request.url)) {
 			return next.handle(request);
 		}
@@ -36,11 +37,12 @@ export class ApiInterceptor implements HttpInterceptor {
 		}
 
 		const token = this._dataUser.getToken();
-		console.log('---------EL INTERCEPTOR ESTA INTERCEPTANDO PAPI---------');
+		//console.log('---------EL INTERCEPTOR ESTA INTERCEPTANDO PAPI---------');
 		const requestclone = request.clone({
 			headers: request.headers.set('Authorization', `Bearer ${token}`)
 		});
-		return next.handle(requestclone);
+		*/
+		return next.handle(request);
 	}
 
 	private isExempted(url: string): boolean {

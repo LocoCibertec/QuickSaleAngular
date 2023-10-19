@@ -43,5 +43,6 @@ const _validSession = (): boolean => {
 		_router.navigateByUrl(PATHS_AUTH_PAGES.loginPage.withSlash);
 		return false;
 	}
+
 	return true;
 };

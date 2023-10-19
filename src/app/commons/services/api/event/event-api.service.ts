@@ -8,6 +8,7 @@ import { ResponseHomev2 } from '../event/event-api.class';
 import { IResponseHomev2 } from '../home/home-api.interface';
 
 export const URL_EVENT = environment.host + '/event';
+
 @Injectable({
 	providedIn: 'root'
 })
@@ -20,6 +21,12 @@ export class EventApiService {
 
 	getHome(): Observable<ResponseHomev2> {
 		return this._httpClient.get<IResponseHomev2>(URL_EVENT).pipe(map((response) => new ResponseHomev2(response)));
+	}
+
+	getHomexCategory(idCategory: number): Observable<ResponseHomev2> {
+		const url = `${URL_EVENT}/filter/${idCategory}`;
+
+		return this._httpClient.get<IResponseHomev2>(url).pipe(map((response) => new ResponseHomev2(response)));
 	}
 
 	getEvents(): Observable<IResponsev2<IResponseEvent[]>> {

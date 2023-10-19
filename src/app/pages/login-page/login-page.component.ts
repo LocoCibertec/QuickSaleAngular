@@ -5,7 +5,7 @@ import { ChannelHeaderService } from 'src/app/commons/services/local/channel-hea
 import { FormBuilder, Validators } from '@angular/forms';
 import { UserApiService } from 'src/app/commons/services/api/user/user-api.service';
 import { IDataUser } from 'src/app/commons/models/data-user';
-import { IResponseLogin } from 'src/app/commons/services/api/user/user-api-model.interface';
+import { IResponseLogin, IResponseLoginv2 } from 'src/app/commons/services/api/user/user-api-model.interface';
 import { SessionStorageService } from 'src/app/commons/services/local/storage/storage.service';
 import { EMAIL_WEB_STORAGE, KEYS_WEB_STORAGE } from 'src/app/commons/utils/enums';
 import { LocalStorageService } from 'src/app/commons/services/local/storage/local-storage.service';
@@ -27,7 +27,7 @@ export class LoginPageComponent implements OnInit {
 	title = 'INICIO DE SESIÓN';
 	readonly pathRecovery = PATHS_AUTH_PAGES.recoverPasswordPage.withSlash;
 	readonly pathRegister = PATHS_AUTH_PAGES.registerPage.withSlash;
-	disabledButton = false;
+	mensaje = '';
 
 	ngOnInit(): void {
 		console.log('Method not implemented.');
@@ -42,15 +42,25 @@ export class LoginPageComponent implements OnInit {
 	clickLogin(): void {
 		if (this.formGroup.valid) {
 			const { email, password } = this.formGroup.getRawValue();
-			this.disabledButton = true;
-
+			/*
 			this._userApiService.login({ userName: email, password }).subscribe({
 				next: (response) => {
 					this._saveDataUserAndRedirect(response);
+					console.log(response);
 				},
 				error: () => {
 					//console.log('dasda');
 					this.disabledButton = false;
+				}
+			});*/
+
+			this._userApiService.loginv2({ email, password }).subscribe({
+				next: (response) => {
+					this._saveDataUserAndRedirectv2(response);
+				},
+				error: () => {
+					//console.log('dasda');
+					//this.disabledButton = false;
 				}
 			});
 		}
@@ -61,6 +71,25 @@ export class LoginPageComponent implements OnInit {
 		//console.log(this.formGroup.invalid);
 		//console.log(this.formGroup.pending);
 		//console.log(this.formGroup.disabled);
+	}
+
+	private _saveDataUserAndRedirectv2(response: IResponseLoginv2): void {
+		const dataUser: IDataUser = {
+			token: 'token_test',
+			fullName: response.name,
+			isAdmin: response.roles == 'admin'
+		};
+		const { email, password } = this.formGroup.getRawValue();
+		this._sessionStorageService.setItem(KEYS_WEB_STORAGE.DATA_USER, dataUser);
+		this._localStorageService.setItem(EMAIL_WEB_STORAGE.EMAIL_USER, email);
+
+		if (dataUser.fullName != '') {
+			this._redirectUser(dataUser.isAdmin);
+			const valueStorage = this._sessionStorageService.getItem<IDataUser>(KEYS_WEB_STORAGE.DATA_USER);
+			console.log(valueStorage);
+		} else {
+			this.mensaje = response.mensaje;
+		}
 	}
 
 	private _saveDataUserAndRedirect(response: IResponseLogin): void {

@@ -50,7 +50,11 @@ export class ErrorInterceptor implements HttpInterceptor {
 	private errorsHttpClient(httpErrorResponse: HttpErrorResponse): void {
 		switch (httpErrorResponse.status) {
 			case 0:
+				this._toastEvokeService.danger('Error', 'Ups,ocurrio un error inesperado, intenta nuevamente.');
+				break;
 			case 500:
+				this._toastEvokeService.danger('Error', 'Ups,ocurrio un error inesperado, intenta nuevamente.');
+				break;
 			case 400:
 				this._toastEvokeService.danger('Error', 'Ups,ocurrio un error inesperado, intenta nuevamente.');
 				break;

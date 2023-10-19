@@ -44,16 +44,14 @@ export class DataUserService {
 	isExpiredToken(): boolean {
 		try {
 			const dataUser = this._sessionStorageService.getItem<IDataUser>(KEYS_WEB_STORAGE.DATA_USER);
-			/*
-			if (dataUser !== null && dataUser.token) {
-				const decoded = jwtDecode<JwtPayload>(dataUser.token);
-				const tokenExpired = Date.now() > decoded.exp! * 1000;
 
-				return true;
-			}
-			*/
+			if (dataUser !== null) {
+				//&& dataUser.token
+				//const decoded = jwtDecode<JwtPayload>(dataUser.token);
+				//const tokenExpired = Date.now() > decoded.exp! * 1000;
 
-			return true;
+				return false;
+			} else return true;
 		} catch (error) {
 			console.error(error);
 			return true;

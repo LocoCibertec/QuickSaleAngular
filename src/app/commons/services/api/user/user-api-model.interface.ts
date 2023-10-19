@@ -13,6 +13,18 @@ export interface IResponseLogin {
 }
 //#endregion
 
+export interface IRequestLoginv2 {
+	email: string;
+	password: string;
+}
+
+export interface IResponseLoginv2 {
+	mensaje: string;
+	name: string;
+	success: boolean;
+	roles: string;
+}
+
 //#region  REGISTER
 export interface IRequestRegister {
 	firstName: string;
@@ -24,6 +36,16 @@ export interface IRequestRegister {
 	confirmPassword: string;
 	age?: number;
 	role?: string;
+}
+
+export interface IRequestRegisterv2 {
+	fullName: string;
+	dni: string;
+	age?: number;
+	email: string;
+	password: string;
+	status: string;
+	roles?: string;
 }
 //#endregion
 

@@ -41,6 +41,7 @@ export class HeaderComponent implements OnInit {
 	}
 
 	private _getDataUser(): void {
+		//if (!this._dataUserService.isExpiredToken()) {
 		if (!this._dataUserService.isExpiredToken()) {
 			this.showUser = true;
 			this.userName = this._dataUserService.getFullName()!;

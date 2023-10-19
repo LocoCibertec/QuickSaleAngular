@@ -11,6 +11,7 @@ import { IHomeGenres, IHomeCategory, IHomeEvent } from 'src/app/commons/services
 import { PATH_BUY_PAGES } from 'src/app/commons/config/path-pages';
 import { Router } from '@angular/router';
 import { DemoCorsService } from 'src/app/commons/services/api/demo-cors/demo-cors.service';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
 	standalone: true,
@@ -26,6 +27,7 @@ export class HomePageComponent implements OnInit {
 	private _eventApiService = inject(EventApiService);
 	private _categoryApiService = inject(CategoryApiService);
 	private _router = inject(Router);
+	private _formBuilder = inject(FormBuilder);
 	//private _demoCorsService = inject(DemoCorsService);
 
 	listConcerts: ICardEvent[] = [];
@@ -33,6 +35,11 @@ export class HomePageComponent implements OnInit {
 	listCategory: IHomeCategory[] = [];
 	listEvents: ICardEvent[] = [];
 	data: any[] = [];
+
+
+	formGroup = this._formBuilder.nonNullable.group({
+		dcbCategory: [0]
+	});
 
 	cardEventDummy: ICardEvent = {
 		date: '20/03/2023',
@@ -63,5 +70,22 @@ export class HomePageComponent implements OnInit {
 			this.listCategory = response.object;
 			//console.log(this.listCategory);
 		});
+	}
+
+	applyFilter(): void {
+		const { dcbCategory } = this.formGroup.getRawValue();
+
+		
+		if(dcbCategory != 0)
+		{
+			this._eventApiService.getHomexCategory(dcbCategory).subscribe((response)=>{
+				this.listEvents = response.getDataCardEvent();
+			});
+		}
+		else{
+			this._eventApiService.getHome().subscribe((response)=>{
+				this.listEvents = response.getDataCardEvent();
+			});
+		}
 	}
 }

@@ -26,15 +26,15 @@
 
 					<div class="content__login flex-column">
 						<span routerLink="{{ pathRecovery }}">¿Olvidaste tu contraseña?</span>
-						<button [disabled]="disabledButton" type="button" mat-raised-button color="primary" (click)="clickLogin()">
-							INGRESAR
-						</button>
+						<button type="button" mat-raised-button color="primary" (click)="clickLogin()">INGRESAR</button>
 					</div>
 
 					<div class="content__register">
 						<span>Si no tienes una cuenta</span>
 						<a routerLink="{{ pathRegister }}">regístrate</a>
 					</div>
+
+					<h3 style="color: red">{{ mensaje | uppercase }}</h3>
 				</form>
 			</mat-card-content>
 		</mat-card>
