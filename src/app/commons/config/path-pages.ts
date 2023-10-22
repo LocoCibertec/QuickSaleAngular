@@ -2,6 +2,7 @@ const loginPage = 'login';
 const registerPage = 'register';
 const recoverPasswordPage = 'recovery';
 const restorePasswordPage = 'restore';
+const questionPage = 'question';
 
 export const PATHS_AUTH_PAGES = {
 	loginPage: {
@@ -19,6 +20,10 @@ export const PATHS_AUTH_PAGES = {
 	restorePasswordPage: {
 		withSlash: `/${restorePasswordPage}`,
 		onlyPath: restorePasswordPage
+	},
+	questionPage: {
+		withSlash: `/${questionPage}`,
+		onlyPath: questionPage
 	}
 };
 //#endregion

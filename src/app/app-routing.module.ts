@@ -38,6 +38,11 @@ export const routes: Routes = [
 		loadComponent: () => import('./pages/restore-password-page/restore-password-page.component')
 	},
 	{
+		path: `${PATHS_AUTH_PAGES.questionPage.onlyPath}`,
+		title: 'Preguntas frecuentes',
+		loadComponent: () => import('./pages/questions-frequently-page/questions-frequently-page.component')
+	},
+	{
 		path: PATH_BUY_PAGES.buyPage.onlyPath,
 		title: 'Compra de entradas',
 		canActivate: [BUY_GUARD],
