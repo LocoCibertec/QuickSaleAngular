@@ -19,6 +19,9 @@ import {
 	NgxAwesomePopupModule,
 	ToastNotificationConfigModule
 } from '@costlydeveloper/ngx-awesome-popup';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { environment } from '../environments/environment';
+import { provideStorage, getStorage } from '@angular/fire/storage';
 registerLocaleData(LocalEsPe);
 
 @NgModule({
@@ -33,7 +36,9 @@ registerLocaleData(LocalEsPe);
 		NgxAwesomePopupModule.forRoot(), // Essential, mandatory main module.
 		DialogConfigModule.forRoot(), // Needed for instantiating dynamic components.
 		ConfirmBoxConfigModule.forRoot(), // Needed for instantiating confirm boxes.
-		ToastNotificationConfigModule.forRoot() // Needed for instantiating toast notifications.
+		ToastNotificationConfigModule.forRoot(),
+		provideFirebaseApp(() => initializeApp(environment.firebase)),
+		provideStorage(() => getStorage()) // Needed for instantiating toast notifications.
 	],
 	providers: [
 		{ provide: LOCALE_ID, useValue: 'es-PE' },

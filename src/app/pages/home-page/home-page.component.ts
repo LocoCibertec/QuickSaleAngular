@@ -38,7 +38,6 @@ export class HomePageComponent implements OnInit {
 	listEvents: ICardEvent[] = [];
 	data: any[] = [];
 
-
 	formGroup = this._formBuilder.nonNullable.group({
 		dcbCategory: [0]
 	});

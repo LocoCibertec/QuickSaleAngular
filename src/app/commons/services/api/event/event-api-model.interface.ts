@@ -4,7 +4,7 @@ export interface IResponseEvent {
 	idEvent: number;
 	title: string;
 	description: string;
-	dateEvent: string;
+	dateEvent: Date;
 	image: string;
 	place: string;
 	ticketsQuantity: number;
@@ -19,7 +19,7 @@ export interface IRequestCreateUpdateEvent {
 	idEvent: number;
 	title: string;
 	description: string;
-	dateEvent: string;
+	dateEvent: Date;
 	image: string;
 	place: string;
 	ticketsQuantity: number;

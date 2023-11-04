@@ -8,13 +8,18 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { RouterModule } from '@angular/router';
 import { ConfirmBoxEvokeService } from '@costlydeveloper/ngx-awesome-popup';
 import { map, Observable } from 'rxjs';
-import { IResponseConcert } from '../../../commons/services/api/concerts/concert-api-model.interface';
-import { ConcertApiService } from '../../../commons/services/api/concerts/concert-api.service';
-import { IResponseGenre } from '../../../commons/services/api/genre/genre-api-model.interface';
-import { GenreApiService } from '../../../commons/services/api/genre/genre-api.service';
+//import { IResponseConcert } from '../../../commons/services/api/concerts/concert-api-model.interface';
+//import { ConcertApiService } from '../../../commons/services/api/concerts/concert-api.service';
+//import { IResponseGenre } from '../../../commons/services/api/genre/genre-api-model.interface';
+//import { GenreApiService } from '../../../commons/services/api/genre/genre-api.service';
 import { SharedFormCompleteModule } from '../../../commons/shared/shared-form-complete.module';
 import { CRUD_METHOD } from '../../../commons/utils/enums';
 import { MaintenanceEventsPageService } from './maintenance-events-page.service';
+import { IResponseCategory } from 'src/app/commons/services/api/category/category-api-model.interface';
+import { CategoryApiService } from 'src/app/commons/services/api/category/category-api.service';
+import { EventApiService } from 'src/app/commons/services/api/event/event-api.service';
+import { IResponseEvent } from 'src/app/commons/services/api/event/event-api-model.interface';
+import { Storage, ref, uploadBytes, listAll, getDownloadURL } from '@angular/fire/storage';
 
 @Component({
 	standalone: true,
@@ -29,14 +34,14 @@ export default class MaintenanceEventsPageComponent implements OnInit, AfterView
 
 	@ViewChild(FormGroupDirective) formRef!: FormGroupDirective;
 
-	listGenres: IResponseGenre[] = [];
+	listCategorys: IResponseCategory[] = [];
 
 	//variable para el Tab
 	indexTabSaveEvent = 0;
 
 	// variables para la tabla
 	displayedColumns: string[] = [
-		'imageUrl',
+		'image',
 		'title',
 		'description',
 		'dateEvent',
@@ -47,30 +52,31 @@ export default class MaintenanceEventsPageComponent implements OnInit, AfterView
 		'action'
 	];
 
-	dataSource = new MatTableDataSource<IResponseConcert>();
+	dataSource = new MatTableDataSource<IResponseEvent>();
 	pageSizeOptions: number[] = [2, 4, 6];
 	private _rowsPageBack = 4;
 	private _numberPageBack = 1;
 	private _crudMethod = CRUD_METHOD.SAVE;
 
-	private _genreApiService = inject(GenreApiService);
+	private _categoryApiService = inject(CategoryApiService);
 	private _maintenanceEventsPageService = inject(MaintenanceEventsPageService);
-	private _eventApiService = inject(ConcertApiService);
+	private _eventApiService = inject(EventApiService);
 	private _confirmBoxEvokeService = inject(ConfirmBoxEvokeService);
+	private _storage = inject(Storage);
 
 	//#region getters Form
 	idField = this._maintenanceEventsPageService.idField;
 	titleField = this._maintenanceEventsPageService.titleField;
 	descriptionField = this._maintenanceEventsPageService.descriptionField;
 	dateField = this._maintenanceEventsPageService.dateField;
-	hourField = this._maintenanceEventsPageService.hourField;
+	//hourField = this._maintenanceEventsPageService.hourField;
 	ticketsQuantityField = this._maintenanceEventsPageService.ticketsQuantityField;
 	priceField = this._maintenanceEventsPageService.priceField;
 	placeField = this._maintenanceEventsPageService.placeField;
 	genreField = this._maintenanceEventsPageService.genreField;
 	statusField = this._maintenanceEventsPageService.statusField;
 	imageField = this._maintenanceEventsPageService.imageField;
-	fileNameField = this._maintenanceEventsPageService.fileNameField;
+	//fileNameField = this._maintenanceEventsPageService.fileNameField;
 	//#region
 
 	// constructor(
@@ -97,7 +103,7 @@ export default class MaintenanceEventsPageComponent implements OnInit, AfterView
 
 	ngOnInit(): void {
 		this._loadEvents();
-		this._loadGenres();
+		this._loadCategorys();
 	}
 
 	ngAfterViewInit(): void {
@@ -137,25 +143,36 @@ export default class MaintenanceEventsPageComponent implements OnInit, AfterView
 	clickDelete(idEvent: number): void {
 		this._maintenanceEventsPageService.deleteEvent(idEvent).subscribe((response) => {
 			if (response) {
-				this.dataSource.data = this.dataSource.data.filter((item) => item.id !== idEvent);
+				this.dataSource.data = this.dataSource.data.filter((item) => item.idEvent !== idEvent);
 			}
 		});
-	}
-
-	clickFinalize(idEvent: number): void {
-		this._maintenanceEventsPageService.endEvent(idEvent);
 	}
 
 	onFileSelected(event: Event): void {
 		const htmlInput: HTMLInputElement = event.target as HTMLInputElement;
 		if (htmlInput && htmlInput.files && htmlInput.files.length > 0) {
 			const reader = new FileReader();
+			const file = htmlInput.files[0];
 			reader.readAsDataURL(htmlInput.files[0]);
 			reader.onload = () => {
 				const resultImageFile = reader.result!.toString();
 
-				this.fileNameField.setValue(htmlInput.files![0].name);
 				this.imageField.setValue(resultImageFile);
+				const imgRef = ref(this._storage, `images/${file.name}`);
+
+				uploadBytes(imgRef, file)
+					.then((response) => {
+						getDownloadURL(imgRef)
+							.then((response) => {
+								this.imageField.setValue(response);
+							})
+							.catch((error) => {
+								console.log(error);
+							});
+					})
+					.catch((error) => {
+						console.log(error);
+					});
 			};
 		}
 	}
@@ -168,12 +185,12 @@ export default class MaintenanceEventsPageComponent implements OnInit, AfterView
 	}
 
 	private _loadEvents(): void {
-		this._eventApiService.getListConcerts(this._numberPageBack, this._rowsPageBack).subscribe((response) => {
+		this._eventApiService.getEvents().subscribe((response) => {
 			if (response.success) {
-				if (response.data.length > 0) {
+				if (response.object.length > 0) {
 					this.dataSource.data = this._maintenanceEventsPageService.getDataEvents(
 						[...this.dataSource.data],
-						response.data
+						response.object
 					);
 				} else {
 					this._numberPageBack--;
@@ -182,10 +199,10 @@ export default class MaintenanceEventsPageComponent implements OnInit, AfterView
 		});
 	}
 
-	private _loadGenres(): void {
-		this._genreApiService.getGenres().subscribe((response) => {
-			if (response && response.data) {
-				this.listGenres = response.data;
+	private _loadCategorys(): void {
+		this._categoryApiService.getCategorys().subscribe((response) => {
+			if (response && response.object) {
+				this.listCategorys = response.object;
 			}
 		});
 	}

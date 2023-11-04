@@ -15,7 +15,7 @@ export const URL_EVENT = environment.host + '/event';
 export class EventApiService {
 	constructor(private _httpClient: HttpClient) {}
 
-	createEvent(request: IRequestCreateUpdateEvent): Observable<IResponsev2<IRequestCreateUpdateEvent>> {
+	createEventv1(request: IRequestCreateUpdateEvent): Observable<IResponsev2<IRequestCreateUpdateEvent>> {
 		return this._httpClient.post<IResponsev2<IRequestCreateUpdateEvent>>(URL_EVENT, request);
 	}
 
@@ -31,5 +31,26 @@ export class EventApiService {
 
 	getEvents(): Observable<IResponsev2<IResponseEvent[]>> {
 		return this._httpClient.get<IResponsev2<IResponseEvent[]>>(URL_EVENT);
+	}
+
+	//-----Nuevos----//
+	createEvent(request: IRequestCreateUpdateEvent): Observable<IResponsev2<IResponseEvent>> {
+		return this._httpClient.post<IResponsev2<IResponseEvent>>(URL_EVENT, request);
+	}
+
+	getEvent(id: number): Observable<IResponsev2<IResponseEvent>> {
+		const url = `${URL_EVENT}/${id}`;
+		return this._httpClient.get<IResponsev2<IResponseEvent>>(url);
+	}
+
+	updateEvent(id: number, request: Partial<IRequestCreateUpdateEvent>): Observable<IResponsev2<IResponseEvent>> {
+		const url = `${URL_EVENT}`;
+		request.idEvent = id;
+		return this._httpClient.put<IResponsev2<IResponseEvent>>(url, request);
+	}
+	deleteEvent(id: number): Observable<IResponsev2<number>> {
+		const url = `${URL_EVENT}/eliminar/${id}`;
+		console.log(url);
+		return this._httpClient.delete<IResponsev2<number>>(url);
 	}
 }
