@@ -5,5 +5,5 @@
 # npm run pre-commit 
 
 #Con la ayuda de pretty-quick aplicamos el formateo y linting unicamente a los archivos modificados
-#npx pretty-quick --pattern "src/**/**.ts" --pattern "src/**/**.json" --pattern "src/**/**.html"  --pattern "src/**/**.scss"  --staged --verbose && ng lint --fix
-npm run pre-commit
+npx pretty-quick --pattern "src/**/**.ts" --pattern "src/**/**.json" --pattern "src/**/**.html"  --pattern "src/**/**.scss"  --staged --verbose && ng lint --fix
+#npm run pre-commit
