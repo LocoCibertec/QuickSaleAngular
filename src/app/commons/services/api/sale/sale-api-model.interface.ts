@@ -62,3 +62,16 @@ export interface IResponseSalev2 {
 	customer: IResponseCustomer;
 	payment: IResponsePayment;
 }
+
+//#region ListSalesByGenre
+export interface IRequestCreateSalev2 {
+	idSale: number;
+	saleDate: Date;
+	operationNumber: string;
+	quantity: number;
+	total: number;
+	event: IResponseEvent;
+	customer: IResponseCustomer;
+	payment: IResponsePayment;
+}
+//#endregion

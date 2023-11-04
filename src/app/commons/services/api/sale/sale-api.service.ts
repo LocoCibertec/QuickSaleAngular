@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from './../../../../../environments/environment';
 import { IResponse, IResponsev2 } from './../api-models-base.interface';
 import {
-	IRequestCreateSale,
+	IRequestCreateSalev2,
 	IRequestListSalesByGenre,
 	IResponseListSales,
 	IResponseSale,
@@ -23,8 +23,8 @@ const URL_LIST_SALE_BY_DATE = URL_SALE + '/ListSalesByDate';
 export class SaleApiService {
 	constructor(private _httpClient: HttpClient) {}
 
-	createSale(sale: IRequestCreateSale): Observable<IResponse<number>> {
-		return this._httpClient.post<IResponse<number>>(URL_CREATE_SALE, sale);
+	createSale(sale: IRequestCreateSalev2): Observable<IResponsev2<IRequestCreateSalev2>> {
+		return this._httpClient.post<IResponsev2<IRequestCreateSalev2>>(URL_SALE, sale);
 	}
 
 	getSale(idSale: number): Observable<IResponse<IResponseSale>> {
@@ -67,5 +67,9 @@ export class SaleApiService {
 	getListSalesv2_Date(dateIni: string, dateFin: string): Observable<IResponse<IResponseListSales[]>> {
 		const URL_LIST_SALE_BY_DATEv2 = URL_SALE + '/find' + '/' + dateIni + '/' + dateFin;
 		return this._httpClient.get<IResponse<IResponseListSales[]>>(URL_LIST_SALE_BY_DATEv2);
+	}
+
+	getSalev2(idSale: number): Observable<IResponsev2<IResponseSalev2>> {
+		return this._httpClient.get<IResponsev2<IResponseSalev2>>(`${URL_SALE}/${idSale}`);
 	}
 }

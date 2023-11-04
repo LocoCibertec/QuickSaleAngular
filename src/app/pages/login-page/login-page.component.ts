@@ -75,6 +75,7 @@ export class LoginPageComponent implements OnInit {
 
 	private _saveDataUserAndRedirectv2(response: IResponseLoginv2): void {
 		const dataUser: IDataUser = {
+			idCustomer: response.id,
 			token: 'token_test',
 			fullName: response.name,
 			isAdmin: response.roles == 'admin'
@@ -94,6 +95,7 @@ export class LoginPageComponent implements OnInit {
 
 	private _saveDataUserAndRedirect(response: IResponseLogin): void {
 		const dataUser: IDataUser = {
+			idCustomer: 0,
 			token: response.token,
 			fullName: response.fullName,
 			isAdmin: response.roles[0] === 'Administrador'

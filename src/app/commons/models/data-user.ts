@@ -1,4 +1,5 @@
 export interface IDataUser {
+	idCustomer: number;
 	token: string;
 	fullName: string;
 	isAdmin: boolean;

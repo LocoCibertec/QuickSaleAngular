@@ -1,4 +1,5 @@
 //#region  GET CATEGORY
+
 export interface IResponseEvent {
 	idEvent: number;
 	title: string;

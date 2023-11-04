@@ -8,9 +8,10 @@ import { CategoryApiService } from 'src/app/commons/services/api/category/catego
 import { EventApiService } from 'src/app/commons/services/api/event/event-api.service';
 import { ICardEvent } from 'src/app/commons/models/components.interface';
 import { IHomeGenres, IHomeCategory, IHomeEvent } from 'src/app/commons/services/api/home/home-api.interface';
-import { PATH_BUY_PAGES } from 'src/app/commons/config/path-pages';
+import { PATHS_AUTH_PAGES, PATH_BUY_PAGES } from 'src/app/commons/config/path-pages';
 import { Router } from '@angular/router';
 import { DemoCorsService } from 'src/app/commons/services/api/demo-cors/demo-cors.service';
+import { DataUserService } from 'src/app/commons/services/local/data-user.service';
 import { FormBuilder } from '@angular/forms';
 
 @Component({
@@ -28,6 +29,7 @@ export class HomePageComponent implements OnInit {
 	private _categoryApiService = inject(CategoryApiService);
 	private _router = inject(Router);
 	private _formBuilder = inject(FormBuilder);
+	private _dataUserService =  inject(DataUserService);
 	//private _demoCorsService = inject(DemoCorsService);
 
 	listConcerts: ICardEvent[] = [];
@@ -58,7 +60,10 @@ export class HomePageComponent implements OnInit {
 	}
 
 	clickCard(event: ICardEvent): void {
-		this._router.navigate([PATH_BUY_PAGES.buyPage.withSlash], { state: { event } });
+		if (!this._dataUserService.isExpiredToken())
+			this._router.navigate([PATH_BUY_PAGES.buyPage.withSlash], { state: { event } });
+		else
+			this._router.navigateByUrl(PATHS_AUTH_PAGES.loginPage.withSlash);
 	}
 
 	private _loadHome() {

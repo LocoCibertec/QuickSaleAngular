@@ -19,6 +19,7 @@ export interface IRequestLoginv2 {
 }
 
 export interface IResponseLoginv2 {
+	id: number;
 	mensaje: string;
 	name: string;
 	success: boolean;
