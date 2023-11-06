@@ -64,9 +64,10 @@ export class SaleApiService {
 		return this._httpClient.get<IResponsev2<IResponseSalev2[]>>(URL_SALE);
 	}
 
-	getListSalesv2_Date(dateIni: string, dateFin: string): Observable<IResponse<IResponseListSales[]>> {
+	getListSalesv2_Date(dateIni: string, dateFin: string): Observable<IResponsev2<IResponseSalev2[]>> {
 		const URL_LIST_SALE_BY_DATEv2 = URL_SALE + '/find' + '/' + dateIni + '/' + dateFin;
-		return this._httpClient.get<IResponse<IResponseListSales[]>>(URL_LIST_SALE_BY_DATEv2);
+		console.log(URL_LIST_SALE_BY_DATEv2);
+		return this._httpClient.get<IResponsev2<IResponseSalev2[]>>(URL_LIST_SALE_BY_DATEv2);
 	}
 
 	getSalev2(idSale: number): Observable<IResponsev2<IResponseSalev2>> {

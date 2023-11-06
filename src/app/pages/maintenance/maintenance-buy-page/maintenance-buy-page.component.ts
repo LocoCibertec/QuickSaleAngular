@@ -9,6 +9,8 @@ import { SaleApiService } from 'src/app/commons/services/api/sale/sale-api.servi
 import { FormBuilder, FormGroupDirective } from '@angular/forms';
 import { IResponseSalev2 } from 'src/app/commons/services/api/sale/sale-api-model.interface';
 import { MaintenanceBuyPageService } from './maintenance-buy-page.service';
+import { IResponsev2 } from 'src/app/commons/services/api/api-models-base.interface';
+import { Observable } from 'rxjs';
 
 @Component({
 	standalone: true,
@@ -25,7 +27,7 @@ export default class MaintenanceBuyPageComponent implements OnInit, AfterViewIni
 	private _maintenanceSalePageService = inject(MaintenanceBuyPageService);
 
 	@ViewChild('paginator') paginator: MatPaginator | undefined;
-	@ViewChild(FormGroupDirective) formRef!: FormGroupDirective;
+	//@ViewChild(FormGroupDirective) formRef!: FormGroupDirective;
 
 	displayedColumns: string[] = ['operationNumber', 'saleDate', 'total', 'quantity', 'status'];
 	dataSource = new MatTableDataSource<IResponseSalev2>();
@@ -40,7 +42,8 @@ export default class MaintenanceBuyPageComponent implements OnInit, AfterViewIni
 	});
 
 	applyFilter(): void {
-		const { dateIni, dateFin } = this.formGroup.getRawValue(); //valores de las fechas
+		this.dataSource.data = this.listSale;
+		this._loadBuys();
 	}
 
 	ngOnInit(): void {
@@ -53,10 +56,12 @@ export default class MaintenanceBuyPageComponent implements OnInit, AfterViewIni
 	}
 
 	private _loadBuys(): void {
-		const dateStart = this._datePipe.transform(new Date(), 'yyyy-MM-dd')!;
-		const dateEnd = this._datePipe.transform(new Date(), 'yyyy-MM-dd')!;
+		const { dateIni, dateFin } = this.formGroup.getRawValue();
+		let filter = true;
 
-		this._saleApiService.getListSalesv2().subscribe((response) => {
+		if (dateIni != '' && dateFin != '') filter = false;
+
+		this._getMethod(filter).subscribe((response) => {
 			if (response.success) {
 				if (response.object.length > 0) {
 					this.dataSource.data = this._maintenanceSalePageService.getDataEvents(
@@ -75,5 +80,22 @@ export default class MaintenanceBuyPageComponent implements OnInit, AfterViewIni
 			this._numberPageBack++;
 			this._loadBuys();
 		}
+	}
+
+	clearFilters(): void {
+		this.formGroup.setValue({
+			dateFin: '',
+			dateIni: ''
+		});
+	}
+
+	private _getMethod(filter: boolean): Observable<IResponsev2<IResponseSalev2[]>> {
+		const { dateIni, dateFin } = this.formGroup.getRawValue();
+		return filter
+			? this._saleApiService.getListSalesv2()
+			: this._saleApiService.getListSalesv2_Date(
+					this._datePipe.transform(dateIni, 'yyyy-MM-dd')!,
+					this._datePipe.transform(dateFin, 'yyyy-MM-dd')!
+			  );
 	}
 }

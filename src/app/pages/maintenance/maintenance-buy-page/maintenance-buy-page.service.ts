@@ -21,7 +21,6 @@ export class MaintenanceBuyPageService {
 			}
 			return newArray;
 		}
-		console.log(responseEvents);
 		return responseEvents;
 	}
 
