@@ -61,7 +61,7 @@ export interface IRequestResetPassword {
 //#region  CHANGE PASWWORD
 export interface IRequestChangePassword {
 	email: string;
-	oldPassword: string;
+	currentPassword: string;
 	newPassword: string;
 }
 //#endregion

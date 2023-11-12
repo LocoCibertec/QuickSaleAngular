@@ -50,12 +50,9 @@ export class AccountChangePasswordPageComponent {
 			this._customerApiService.getCustomer(idCustomer).subscribe((responseCustomer) => {
 				const request: IRequestChangePassword = {
 					email: responseCustomer.object.email,
-					oldPassword: responseCustomer.object.password,
+					currentPassword: responseCustomer.object.password,
 					newPassword: this.newPasswordField.value
 				};
-
-				console.log(request);
-
 				this._changePassword(request).subscribe((response) => {
 					if (response) {
 						this.formRef.resetForm();
@@ -66,7 +63,6 @@ export class AccountChangePasswordPageComponent {
 	}
 
 	private _changePassword(request: IRequestChangePassword): Observable<boolean> {
-		console.log(request);
 		return this._confirmBoxEvokeService
 			.warning('Mi cuenta', '¿Esta seguro de cambiar tu contraseña?', 'Si', 'Cancelar')
 			.pipe(
@@ -77,8 +73,10 @@ export class AccountChangePasswordPageComponent {
 					if (response.success) {
 						this._toastEvokeService.success('Exito', 'Se cambio la contraseña correctamente');
 						return this._succes(true);
+					} else {
+						this._toastEvokeService.danger('Error', response.mensaje);
+						return this._succes(false);
 					}
-					return this._succes(false);
 				})
 			);
 	}

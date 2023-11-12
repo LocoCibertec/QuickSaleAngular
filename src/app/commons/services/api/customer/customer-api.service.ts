@@ -18,9 +18,8 @@ export class CustomerApiService {
 		return this._httpClient.get<IResponsev2<IResponseCustomer>>(url);
 	}
 
-	changePassword(request: IRequestChangePassword): Observable<IResponsev2> {
-		const url = `${URL_CUSTOMER}/changePassword/${request.email}/${request.oldPassword}/${request.newPassword}`;
-		console.log(url);
-		return this._httpClient.put<IResponsev2>(url, request);
+	changePassword(request: IRequestChangePassword): Observable<IResponsev2<IResponseCustomer>> {
+		const url = `${URL_CUSTOMER}/changePassword`;
+		return this._httpClient.put<IResponsev2<IResponseCustomer>>(url, request);
 	}
 }
