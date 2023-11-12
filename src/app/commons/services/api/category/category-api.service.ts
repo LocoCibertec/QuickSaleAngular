@@ -20,4 +20,24 @@ export class CategoryApiService {
 	getCategorys(): Observable<IResponsev2<IResponseCategory[]>> {
 		return this._httpClient.get<IResponsev2<IResponseCategory[]>>(URL_CATEGORY);
 	}
+
+	getCategory(id: number): Observable<IResponsev2<IResponseCategory>> {
+		const url = `${URL_CATEGORY}/${id}`;
+		return this._httpClient.get<IResponsev2<IResponseCategory>>(url);
+	}
+
+	updateCategory(
+		id: number,
+		request: Partial<IRequestCreateUpdateCategory>
+	): Observable<IResponsev2<IResponseCategory>> {
+		const url = `${URL_CATEGORY}`;
+		request.idCategory = id;
+		return this._httpClient.put<IResponsev2<IResponseCategory>>(url, request);
+	}
+
+	deleteGenre(id: number): Observable<IResponsev2<number>> {
+		const url = `${URL_CATEGORY}/eliminar/${id}`;
+		console.log(url);
+		return this._httpClient.delete<IResponsev2<number>>(url);
+	}
 }

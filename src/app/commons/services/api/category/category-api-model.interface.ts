@@ -8,6 +8,7 @@ export interface IResponseCategory {
 
 //#region CREATE CATEGORY
 export interface IRequestCreateUpdateCategory {
+	idCategory: number;
 	description: string;
 	status: string;
 }
