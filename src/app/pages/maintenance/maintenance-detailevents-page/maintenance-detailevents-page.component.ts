@@ -1,3 +1,4 @@
+import { IResponseDetailsEvent } from './../../../commons/services/api/details-event/detailsevent-api-model.interface';
 import { DatePipe } from '@angular/common';
 import { AfterViewInit, Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormGroupDirective } from '@angular/forms';
@@ -8,85 +9,56 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { RouterModule } from '@angular/router';
 import { ConfirmBoxEvokeService } from '@costlydeveloper/ngx-awesome-popup';
 import { map, Observable } from 'rxjs';
-//import { IResponseConcert } from '../../../commons/services/api/concerts/concert-api-model.interface';
-//import { ConcertApiService } from '../../../commons/services/api/concerts/concert-api.service';
-//import { IResponseGenre } from '../../../commons/services/api/genre/genre-api-model.interface';
-//import { GenreApiService } from '../../../commons/services/api/genre/genre-api.service';
 import { SharedFormCompleteModule } from '../../../commons/shared/shared-form-complete.module';
 import { CRUD_METHOD } from '../../../commons/utils/enums';
-import { MaintenanceEventsPageService } from './maintenance-events-page.service';
-import { IResponseCategory } from 'src/app/commons/services/api/category/category-api-model.interface';
-import { CategoryApiService } from 'src/app/commons/services/api/category/category-api.service';
+import { MaintenanceDetaileventsPageService } from './maintenance-detailevents-page.service';
 import { EventApiService } from 'src/app/commons/services/api/event/event-api.service';
 import { IResponseEvent } from 'src/app/commons/services/api/event/event-api-model.interface';
 import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
+import { DetailsEventApiService } from 'src/app/commons/services/api/details-event/detailsevent-api.service';
 
 @Component({
 	standalone: true,
-	selector: 'app-maintenance-events-page',
-	templateUrl: './maintenance-events-page.component.html',
-	styleUrls: ['./maintenance-events-page.component.scss'],
+	selector: 'app-maintenance-detailevents-page',
+	templateUrl: './maintenance-detailevents-page.component.html',
+	styleUrls: ['./maintenance-detailevents-page.component.scss'],
 	imports: [RouterModule, MatTableModule, MatTabsModule, MatMenuModule, MatPaginatorModule, SharedFormCompleteModule],
-	providers: [MaintenanceEventsPageService, DatePipe]
+	providers: [MaintenanceDetaileventsPageService, DatePipe]
 })
-export default class MaintenanceEventsPageComponent implements OnInit, AfterViewInit {
+export default class MaintenanceDetaileventsPageComponent implements OnInit, AfterViewInit {
 	@ViewChild('paginator') paginator: MatPaginator | undefined;
 
 	@ViewChild(FormGroupDirective) formRef!: FormGroupDirective;
-
-	listCategorys: IResponseCategory[] = [];
+	listEvents: IResponseEvent[] = [];
+	listDetailEvents: IResponseDetailsEvent[] = [];
 
 	//variable para el Tab
 	indexTabSaveEvent = 0;
 
 	// variables para la tabla
-	displayedColumns: string[] = [
-		'image',
-		'title',
-		'description',
-		'dateEvent',
-		'ticketsQuantity',
-		'price',
-		'genre',
-		'status',
-		'action'
-	];
+	displayedColumns: string[] = ['urlImageRef', 'title', 'description', 'comments', 'status', 'action'];
 
-	dataSource = new MatTableDataSource<IResponseEvent>();
+	dataSource = new MatTableDataSource<IResponseDetailsEvent>();
 	pageSizeOptions: number[] = [2, 4, 6];
 	private _rowsPageBack = 4;
 	private _numberPageBack = 1;
 	private _crudMethod = CRUD_METHOD.SAVE;
 
-	private _categoryApiService = inject(CategoryApiService);
-	private _maintenanceEventsPageService = inject(MaintenanceEventsPageService);
+	private _maintenanceDetaileventsPageService = inject(MaintenanceDetaileventsPageService);
+	private _detailsEventApiService = inject(DetailsEventApiService);
 	private _eventApiService = inject(EventApiService);
 	private _confirmBoxEvokeService = inject(ConfirmBoxEvokeService);
 	private _storage = inject(Storage);
 
-	//#region getters Form
-	idField = this._maintenanceEventsPageService.idField;
-	titleField = this._maintenanceEventsPageService.titleField;
-	descriptionField = this._maintenanceEventsPageService.descriptionField;
-	dateField = this._maintenanceEventsPageService.dateField;
-	//hourField = this._maintenanceEventsPageService.hourField;
-	ticketsQuantityField = this._maintenanceEventsPageService.ticketsQuantityField;
-	priceField = this._maintenanceEventsPageService.priceField;
-	placeField = this._maintenanceEventsPageService.placeField;
-	genreField = this._maintenanceEventsPageService.genreField;
-	statusField = this._maintenanceEventsPageService.statusField;
-	imageField = this._maintenanceEventsPageService.imageField;
-	//fileNameField = this._maintenanceEventsPageService.fileNameField;
-	//#region
+	idField = this._maintenanceDetaileventsPageService.idField;
+	titleField = this._maintenanceDetaileventsPageService.titleField;
+	descriptionField = this._maintenanceDetaileventsPageService.descriptionField;
+	commentsField = this._maintenanceDetaileventsPageService.commentsField;
+	urlImageRefField = this._maintenanceDetaileventsPageService.urlImageRefField;
+	statusField = this._maintenanceDetaileventsPageService.statusField;
+	eventField = this._maintenanceDetaileventsPageService.eventField;
 
-	// constructor(
-	// 	private _genreApiService: GenreApiService,
-	// 	private _maintenanceEventsPageService: MaintenanceEventsPageService,
-	// 	private _eventApiService: ConcertApiService,
-	// 	private _confirmBoxEvokeService: ConfirmBoxEvokeService
-	// ) {}
-
-	formGroup = this._maintenanceEventsPageService.formGroup;
+	formGroup = this._maintenanceDetaileventsPageService.formGroup;
 
 	canDeactivate(): Observable<boolean> | boolean {
 		const values = this.formGroup.getRawValue();
@@ -102,8 +74,8 @@ export default class MaintenanceEventsPageComponent implements OnInit, AfterView
 	}
 
 	ngOnInit(): void {
+		this._loadDetailEvents();
 		this._loadEvents();
-		this._loadCategorys();
 	}
 
 	ngAfterViewInit(): void {
@@ -117,10 +89,11 @@ export default class MaintenanceEventsPageComponent implements OnInit, AfterView
 
 	clickSave(): void {
 		if (this.formGroup.valid) {
-			this._maintenanceEventsPageService.saveEvent(this._crudMethod).subscribe((response) => {
+			this._maintenanceDetaileventsPageService.saveEvent(this._crudMethod).subscribe((response) => {
 				if (response) {
 					this.formRef.resetForm();
-					this._loadEvents();
+					this.dataSource.data = this.listDetailEvents;
+					this._loadDetailEvents();
 				}
 			});
 		}
@@ -131,8 +104,9 @@ export default class MaintenanceEventsPageComponent implements OnInit, AfterView
 		this.formRef.resetForm();
 	}
 
-	clickUpdate(idEvent: number): void {
-		this._maintenanceEventsPageService.updateForm(idEvent).subscribe((response) => {
+	clickUpdate(idDetailsEvents: number): void {
+		console.log(idDetailsEvents);
+		this._maintenanceDetaileventsPageService.updateForm(idDetailsEvents).subscribe((response) => {
 			if (response.success) {
 				this.indexTabSaveEvent = 0;
 				this._crudMethod = CRUD_METHOD.UPDATE;
@@ -140,10 +114,10 @@ export default class MaintenanceEventsPageComponent implements OnInit, AfterView
 		});
 	}
 
-	clickDelete(idEvent: number): void {
-		this._maintenanceEventsPageService.deleteEvent(idEvent).subscribe((response) => {
+	clickDelete(idDetailsEvents: number): void {
+		this._maintenanceDetaileventsPageService.deleteEvent(idDetailsEvents).subscribe((response) => {
 			if (response) {
-				this.dataSource.data = this.dataSource.data.filter((item) => item.idEvent !== idEvent);
+				this.dataSource.data = this.dataSource.data.filter((item) => item.idDetailsEvents !== idDetailsEvents);
 			}
 		});
 	}
@@ -157,14 +131,14 @@ export default class MaintenanceEventsPageComponent implements OnInit, AfterView
 			reader.onload = () => {
 				const resultImageFile = reader.result!.toString();
 
-				this.imageField.setValue(resultImageFile);
+				this.urlImageRefField.setValue(resultImageFile);
 				const imgRef = ref(this._storage, `images/${file.name}`);
 
 				uploadBytes(imgRef, file)
 					.then((response) => {
 						getDownloadURL(imgRef)
 							.then((response) => {
-								this.imageField.setValue(response);
+								this.urlImageRefField.setValue(response);
 							})
 							.catch((error) => {
 								console.log(error);
@@ -184,11 +158,11 @@ export default class MaintenanceEventsPageComponent implements OnInit, AfterView
 		}
 	}
 
-	private _loadEvents(): void {
-		this._eventApiService.getEvents().subscribe((response) => {
+	private _loadDetailEvents(): void {
+		this._detailsEventApiService.getDetailsEvents().subscribe((response) => {
 			if (response.success) {
 				if (response.object.length > 0) {
-					this.dataSource.data = this._maintenanceEventsPageService.getDataEvents(
+					this.dataSource.data = this._maintenanceDetaileventsPageService.getDataDetailsEvents(
 						[...this.dataSource.data],
 						response.object
 					);
@@ -199,10 +173,10 @@ export default class MaintenanceEventsPageComponent implements OnInit, AfterView
 		});
 	}
 
-	private _loadCategorys(): void {
-		this._categoryApiService.getCategorys().subscribe((response) => {
+	private _loadEvents(): void {
+		this._eventApiService.getEvents().subscribe((response) => {
 			if (response && response.object) {
-				this.listCategorys = response.object;
+				this.listEvents = response.object;
 			}
 		});
 	}

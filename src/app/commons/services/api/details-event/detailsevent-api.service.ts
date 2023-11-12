@@ -19,6 +19,20 @@ export class DetailsEventApiService {
 		return this._httpClient.post<IResponsev2<IRequestCreateUpdateDetailsEvent>>(URL_DETAILS_EVENT, request);
 	}
 
+	updateDetailsEvent(
+		id: number,
+		request: Partial<IRequestCreateUpdateDetailsEvent>
+	): Observable<IResponsev2<IResponseDetailsEvent>> {
+		const url = `${URL_DETAILS_EVENT}`;
+		request.idDetailsEvents = id;
+		return this._httpClient.put<IResponsev2<IResponseDetailsEvent>>(url, request);
+	}
+
+	deleteDetailsEvent(id: number): Observable<IResponsev2<number>> {
+		const url = `${URL_DETAILS_EVENT}/eliminar/${id}`;
+		return this._httpClient.delete<IResponsev2<number>>(url);
+	}
+
 	getDetailsEvents(): Observable<IResponsev2<IResponseDetailsEvent[]>> {
 		return this._httpClient.get<IResponsev2<IResponseDetailsEvent[]>>(URL_DETAILS_EVENT);
 	}

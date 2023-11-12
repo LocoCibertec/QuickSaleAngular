@@ -3,7 +3,7 @@
 	.mat-select-value-text {
 		color: white;
 	}
-	.mat-mdc-select-value-text{
+	.mat-mdc-select-value-text {
 		color: white;
 	}
 }
@@ -25,11 +25,10 @@
 	display: grid;
 	grid-gap: 20px;
 	justify-content: space-between;
-	grid-template-areas: "contenido contenido sidebar";
+	grid-template-areas: 'contenido contenido sidebar';
 }
 
 .containerDetails .sidebar {
-	background: #fAA43D;
 	text-align: right;
 	display: flex;
 	align-items: flex-end;
@@ -42,11 +41,15 @@
 	grid-area: contenido;
 }
 
-@media screen and (max-width: 768px){
+@media screen and (max-width: 768px) {
 	.containerDetails {
-		grid-template-areas: "contenido contenido contenido"
-						 	 "sidebar sidebar sidebar";
+		grid-template-areas:
+			'contenido contenido contenido'
+			'sidebar sidebar sidebar';
 	}
+}
+
+.card-content_img {
 }
 
 .container {

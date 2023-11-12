@@ -73,4 +73,9 @@ export class SaleApiService {
 	getSalev2(idSale: number): Observable<IResponsev2<IResponseSalev2>> {
 		return this._httpClient.get<IResponsev2<IResponseSalev2>>(`${URL_SALE}/${idSale}`);
 	}
+
+	getListSalesv2_Email(email: string): Observable<IResponsev2<IResponseSalev2[]>> {
+		const URL_LIST_SALE_BY_Email = URL_SALE + '/find' + '/' + email;
+		return this._httpClient.get<IResponsev2<IResponseSalev2[]>>(URL_LIST_SALE_BY_Email);
+	}
 }

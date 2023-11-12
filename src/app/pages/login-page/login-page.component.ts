@@ -87,7 +87,6 @@ export class LoginPageComponent implements OnInit {
 		if (dataUser.fullName != '') {
 			this._redirectUser(dataUser.isAdmin);
 			const valueStorage = this._sessionStorageService.getItem<IDataUser>(KEYS_WEB_STORAGE.DATA_USER);
-			console.log(valueStorage);
 		} else {
 			this.mensaje = response.mensaje;
 		}

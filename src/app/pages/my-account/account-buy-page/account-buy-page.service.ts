@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { SaleApiService } from 'src/app/commons/services/api/sale/sale-api.service';
-import { IResponseListSales } from 'src/app/commons/services/api/sale/sale-api-model.interface';
+import { IResponseListSales, IResponseSalev2 } from 'src/app/commons/services/api/sale/sale-api-model.interface';
 
 @Injectable()
 export class AccountBuyPageService {
@@ -11,10 +11,10 @@ export class AccountBuyPageService {
 
 	formGroup = this._getFormGroup();
 
-	getDataEvents(existingData: IResponseListSales[], responseEvents: IResponseListSales[]): IResponseListSales[] {
+	getDataEvents(existingData: IResponseSalev2[], responseEvents: IResponseSalev2[]): IResponseSalev2[] {
 		if (existingData && existingData.length > 0) {
 			let newArray = responseEvents.filter((eventResponse) => {
-				return existingData.some((event) => event.saleId === eventResponse.saleId);
+				return existingData.some((event) => event.idSale === eventResponse.idSale);
 			});
 
 			if (newArray.length === 0) {
@@ -22,7 +22,7 @@ export class AccountBuyPageService {
 			} else {
 				newArray = existingData
 					.filter((event) => {
-						return !responseEvents.some((eventResponse) => eventResponse.saleId === event.saleId);
+						return !responseEvents.some((eventResponse) => eventResponse.idSale === event.idSale);
 					})
 					.concat(newArray);
 			}

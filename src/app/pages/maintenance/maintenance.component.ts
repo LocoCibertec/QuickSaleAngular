@@ -26,6 +26,12 @@ export class MaintenanceComponent {
 			path: PATH_MAINTENANCE_PAGES.events.withSlash
 		},
 		{
+			title: 'DETALLE EVENTOS',
+			nameImage: 'detalle.png',
+			active: false,
+			path: PATH_MAINTENANCE_PAGES.detailevents.withSlash
+		},
+		{
 			title: 'GENEROS',
 			nameImage: 'genres.png',
 			active: false,

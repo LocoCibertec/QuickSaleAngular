@@ -10,6 +10,7 @@ import { ConfirmBoxEvokeService, ToastEvokeService } from '@costlydeveloper/ngx-
 import { IRequestChangePassword } from './../../../commons/services/api/user/user-api-model.interface';
 import { SharedFormCompleteModule } from 'src/app/commons/shared/shared-form-complete.module';
 import { DataUserService } from 'src/app/commons/services/local/data-user.service';
+import { CustomerApiService } from 'src/app/commons/services/api/customer/customer-api.service';
 
 @Component({
 	standalone: true,
@@ -28,6 +29,7 @@ export class AccountChangePasswordPageComponent {
 
 	private _confirmBoxEvokeService = inject(ConfirmBoxEvokeService);
 	private _toastEvokeService = inject(ToastEvokeService);
+	private _customerApiService = inject(CustomerApiService);
 
 	private _dataUser = inject(DataUserService);
 
@@ -44,16 +46,21 @@ export class AccountChangePasswordPageComponent {
 
 	clickRestore(): void {
 		if (this.formGroup.valid) {
-			const request: IRequestChangePassword = {
-				email: this._email!,
-				oldPassword: this.oldPasswordField.value,
-				newPassword: this.newPasswordField.value
-			};
-			console.log(request);
-			this._changePassword(request).subscribe((response) => {
-				if (response) {
-					this.formRef.resetForm();
-				}
+			const idCustomer = this._dataUser.getIdCustomer() as number;
+			this._customerApiService.getCustomer(idCustomer).subscribe((responseCustomer) => {
+				const request: IRequestChangePassword = {
+					email: responseCustomer.object.email,
+					oldPassword: responseCustomer.object.password,
+					newPassword: this.newPasswordField.value
+				};
+
+				console.log(request);
+
+				this._changePassword(request).subscribe((response) => {
+					if (response) {
+						this.formRef.resetForm();
+					}
+				});
 			});
 		}
 	}
@@ -64,7 +71,7 @@ export class AccountChangePasswordPageComponent {
 			.warning('Mi cuenta', '¿Esta seguro de cambiar tu contraseña?', 'Si', 'Cancelar')
 			.pipe(
 				concatMap((responseQuestion) =>
-					responseQuestion.success ? this._userApiService.changePassword(request) : EMPTY
+					responseQuestion.success ? this._customerApiService.changePassword(request) : EMPTY
 				),
 				concatMap((response) => {
 					if (response.success) {

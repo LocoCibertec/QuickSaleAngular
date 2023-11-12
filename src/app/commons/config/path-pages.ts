@@ -43,6 +43,7 @@ export const PATH_BUY_PAGES = {
 const maintenancePage = 'maintenance';
 const maintenanceBuyPage = 'buy';
 const maintenanceEventPage = 'event';
+const maintenanceDetailEventPage = 'detailevents';
 const maintenanceGenrePage = 'genre';
 const maintenanceReportPage = 'report';
 
@@ -58,6 +59,10 @@ export const PATH_MAINTENANCE_PAGES = {
 	events: {
 		withSlash: `/${maintenancePage}/${maintenanceEventPage}`,
 		onlyPath: maintenanceEventPage
+	},
+	detailevents: {
+		withSlash: `/${maintenancePage}/${maintenanceDetailEventPage}`,
+		onlyPath: maintenanceDetailEventPage
 	},
 	genres: {
 		withSlash: `/${maintenancePage}/${maintenanceGenrePage}`,
